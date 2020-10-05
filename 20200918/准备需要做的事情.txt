@@ -1,0 +1,119 @@
+1.docker搭建vsftpd
+2.docker单机jenkins
+3.docker搭建nginx
+4.docker搭建gitlab
+5.docker搭建consul集群
+6.docker搭建rancher-server
+7.docker搭建docker-web
+8.docker搭建prometheus和grafana
+9.docker搭建registry/harbor
+10.docker搭建私服（neuxs）
+11.docker搭建elk
+12.docker搭建hadoop/spark/flink(后续自学)
+13.
+
+
+
+centos7安装docker-compose
+1.安装python-pip
+#先检查linux有没有安装python-pip包
+pip -v
+yum -y install epel-release
+yum -y install python-pip
+#对安装好的pip进行升级
+pip install -upgrade pip 
+2.安装docker-compose
+pip install docker-compose --ignore-installed requests
+#检查docker-compose安装
+docker-compose -version
+
+
+Q:After October 2020 you may experience errors when installing or updating packages
+D:问题描述: 使用pip安装模块时报错: ERROR: After October 2020 you may experience errors when installing or updating packages. This is because pip will change the way that it resolves dependency conflicts. We recommend you use --use-feature=2020-resolver to test your packages with the new resolver before it becomes the default.
+A:解决方法: 在pip命令中加入–use-feature=2020-resolver参数就可以了, 比如pip install xxx --use-feature=2020-resolver
+
+使用IntelliJ Idea新建SpringBoot项目
+
+SpringBoot定时任务
+
+SpringBoot返回json和xml
+
+SpringBoot使用validator校验
+
+SpringBoot启动banner更改
+
+SpringBoot使用LomBok
+
+· Web学习
+
+SpringBoot的第一个web项目
+
+SpringBoot集成FreeMarker
+
+SpringBoot集成Thymeleaf
+
+SpringBoot使用WebJars
+
+SpringBoot的国际化使用
+
+SpringBoot文件上传下载
+
+SpringBoot邮件发送
+
+· 数据库学习
+
+SpringBoot使用数据库
+
+SpringBoot+Jpa+MySql学习
+
+SpringBoot+Mybatis+MySql学习
+
+SpringBoot多数据源
+
+SpringBoot使用Swagger2实现Restful API
+
+SpringBoot集成阿里巴巴Druid监控
+
+SpringBoot使用mongodb
+
+· 拦截器
+
+SpringBoot拦截器
+
+· 缓存
+
+SpringBoot使用缓存
+
+SpringBoot整合Redis
+
+· 事务
+
+SpringBoot使用事务
+
+· 异常处理
+
+SpringBoot统一处理异常
+
+· 日志学习
+
+使用Log4j日志处理
+
+· 监控学习
+
+使用Actuator监控
+
+使用Admin监控
+
+· 安全学习
+
+使用shiro安全管理
+
+使用SpringSecurity
+
+· 进阶学习
+
+SpringBoot整合RabbitMq
+
+SpringBoot整合ElasticSearch
+
+SpringBoot整合activiti

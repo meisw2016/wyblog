@@ -15,3 +15,5 @@
 * [docker容器](docker/index2)
 ** [docker环境搭建](docker/env)
 * [API文档搭建](api/index)
+* [搭建文件存储服务器](docker/mini)
+* [java流程图形状说明](docker/流程图)

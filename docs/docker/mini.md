@@ -1,4 +1,6 @@
 # docker部署minIO
+* `使用192.169.60.130虚拟机作为宿主机搭建minio文件服务器`
+
 ~~~
 docker run -p 9090:9000 --name minio \
   --net consul --ip 172.19.0.31\

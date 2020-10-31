@@ -14,6 +14,13 @@
 -->
 * [docker容器](docker/index2)
 ** [docker环境搭建](docker/env)
+** [docker搭建paddle](study/paddle)
+** [docker搭建prometheus](study/prometheus)
+** [linux防火墙相关](study/linux防火墙)
+* [监控系统搭建](monitor/readme)
 * [API文档搭建](api/index)
 * [搭建文件存储服务器](docker/mini)
 * [java流程图形状说明](docker/流程图)
+* [电影名推荐](电影/激动部队/jdbd)
+* [ES操作](study/es)
+* [geek](study/Five)

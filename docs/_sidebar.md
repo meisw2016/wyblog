@@ -14,7 +14,7 @@
 -->
 * [docker容器](docker/index2)
 ** [docker环境搭建](docker/env)
-** [docker安装elk](docker/elk)
+** [docker安装elk](docker/elk2)
 ** [docker安装mysql](study/mysql)
 ** [docker搭建grafana](docker/grafana)
 ** [docker搭建paddle](study/paddle)

@@ -234,22 +234,22 @@ PUT /std-2020-11-21?pretty
 
 3.创建数据
 POST std-2020-11-21/
-{"idcardno":"130283198901270444",
+{"idcardno":"0000000000000",
 "ganwei":"中级软件工程师",
 "org2name":null,
 "@timestamp":"2020-12-01T13:45:10.509Z",
 "stafflevel":"03",
 "actorno":"019051",
-"telnum":"15901165424",
-"usermail":"xumeng@yusys.com.cn",
+"telnum":"22222222222",
+"usermail":"1111111@yusys.com.cn",
 "type":"log",
 "@version":"1",
 "tags":["_dateparsefailure"],
-"loginname":"xumeng",
+"loginname":"1111111",
 "statename":"离职员工",
 "rzdate":"2016-10-24",
 "zyxuliename":"软件序列",
-"actorname":"许萌",
+"actorname":"111111",
 "id":9726,
 "staffsexname":"女"}
 

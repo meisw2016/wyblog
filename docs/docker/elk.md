@@ -76,6 +76,7 @@ setup.template.settings:
 #  enabled: true
 output.elasticsearch:
   hosts: ["192.169.60.129:21002"]
+  index => "nginx-access-log-%{+YYYY.MM.dd}"  
 ~~~
 	filebeat采集docker日志
 ~~~

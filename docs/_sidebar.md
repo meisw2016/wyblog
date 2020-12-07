@@ -15,6 +15,7 @@
 * [docker容器](docker/index2)
 ** [docker环境搭建](docker/env)
 ** [docker安装elk](docker/elk)
+** [docker安装redis](docker/docker安装redis)
 ** [docker安装mysql](study/mysql)
 ** [docker安装kafka](docker/kafka)
 ** [docker搭建grafana](docker/grafana)

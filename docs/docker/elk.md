@@ -421,3 +421,237 @@ if[type]=="tb_usertest02"{
     }
 }
 ~~~
+# logstash采集mysql数据conf文件配置
+
+~~~
+demo1:
+input {
+	stdin {
+	}
+	jdbc {
+		jdbc_connection_string => "jdbc:mysql://192.169.60.129:21009/network?characterEncoding=UTF-8&userSSL=false"
+		jdbc_user => "root"
+		jdbc_password => "123456"
+		lowercase_column_names => "false"
+		jdbc_driver_library => "/home/meisw/elk/mysql-connector-java-5.1.47.jar"
+		jdbc_driver_class => "com.mysql.jdbc.Driver"
+		jdbc_paging_enabled => "true"
+		jdbc_page_size => "50000"
+		jdbc_default_timezone => "UTC"
+		statement_filepath => "/home/meisw/elk/jdbc.sql"
+		schedule => "* * * * *"
+		type => "log"
+	}
+}
+
+filter {
+	date {
+		match => ["@timestamp","MM-dd-yyyy HH:mm:ss"]
+		target => "@timestamp"
+	}
+	json {
+		source => "message"
+		remove_field => ["message"]
+	}
+}
+
+output {
+	elasticsearch {
+		hosts => ["192.169.60.129:21002"]
+		index => "std-log-%{+YYYY-MM-dd}"
+		document_type => "user"
+		document_id => "%{id}"
+	}
+	stdout {
+		codec => json_lines
+	}
+}
+
+demo2：
+input {
+        stdin {
+        }
+        jdbc {
+                jdbc_connection_string => "jdbc:mysql://192.169.60.129:21009/network?characterEncoding=UTF-8&userSSL=false"
+                jdbc_user => "root"
+                jdbc_password => "123456"
+                lowercase_column_names => "false"
+                jdbc_driver_library => "/home/meisw/elk/mysql-connector-java-5.1.47.jar"
+                jdbc_driver_class => "com.mysql.jdbc.Driver"
+                jdbc_paging_enabled => "true"
+                jdbc_page_size => "50000"
+                jdbc_default_timezone => "UTC"
+                statement_filepath => "/home/meisw/elk/jdbc2.sql"
+                schedule => "* * * * *"
+                type => "log"
+        }
+}
+
+filter {
+        date {
+                match => ["@timestamp","MM-dd-yyyy HH:mm:ss"]
+                target => "@timestamp"
+        }
+        json {
+                source => "message"
+                remove_field => ["message"]
+        }
+}
+
+output {
+        elasticsearch {
+                hosts => ["192.169.60.129:21002"]
+                index => "network-log-%{+YYYY-MM-dd}"
+                document_type => "network"
+                document_id => "%{id}"
+        }
+        stdout {
+                codec => json_lines
+        }
+}
+demo3:
+input {
+	stdin {
+	}
+	jdbc {
+		jdbc_connection_string => "jdbc:mysql://192.169.60.129:21009/network?characterEncoding=UTF-8&userSSL=false"
+		jdbc_user => "root"
+		jdbc_password => "123456"
+		lowercase_column_names => "false"
+		jdbc_driver_library => "/home/meisw/elk/mysql-connector-java-5.1.47.jar"
+		jdbc_driver_class => "com.mysql.jdbc.Driver"
+		jdbc_paging_enabled => "true"
+		jdbc_page_size => "50000"
+		jdbc_default_timezone => "UTC"
+		statement_filepath => "/home/meisw/elk/jd.sql"
+		schedule => "* * * * *"
+		type => "jdlog"
+	}
+}
+
+filter {
+	date {
+		match => ["crawler_time","MM-dd-yyyy HH:mm:ss"]
+		target => "@timestamp"
+	}
+	json {
+		source => "message"
+		remove_field => ["message"]
+	}
+}
+
+output {
+	elasticsearch {
+		hosts => ["192.169.60.129:21002"]
+		index => "jd-log-%{+YYYY-MM-dd}"
+		document_type => "jd"
+		document_id => "%{id}"
+	}
+	stdout {
+		codec => json_lines
+	}
+}
+
+~~~
+curl -XPUT -H "Content-Type: application/json" http://192.169.60.129:21002/_all/_settings -d '{"index.blocks.read_only_allow_delete": null}'
+
+input {
+  jdbc {
+    jdbc_driver_class => "com.mysql.jdbc.Driver"
+    jdbc_connection_string => "jdbc:mysql://192.169.60.129:21009/network?characterEncoding=UTF-8&userSSL=false"
+    jdbc_user => root
+    jdbc_password => 123456
+	lowercase_column_names => "false"
+	jdbc_driver_library => "/home/meisw/elk/mysql-connector-java-5.1.47.jar"
+    #启用追踪，如果为true，则需要指定tracking_column
+    use_column_value => true
+    #指定追踪的字段，
+    tracking_column => "id"
+    #追踪字段的类型，目前只有数字(numeric)和时间类型(timestamp)，默认是数字类型
+    tracking_column_type => "numeric"
+    #记录最后一次运行的结果
+    record_last_run => true
+    #上面运行结果的保存位置
+    last_run_metadata_path => "jdbc-network-position.txt"
+    statement => "SELECT * FROM user where id >:sql_last_value;"
+    schedule => " * * * * * *"
+  }
+}
+output {
+  elasticsearch {
+    document_id => "%{id}"
+    document_type => "_doc"
+    hosts => ["192.169.60.129:21002"]
+	index => "network-log-%{+YYYY-MM-dd}"
+  }
+  stdout{
+    codec => rubydebug
+  }
+}
+
+# docker搭建redis单机
+
+~~~
+docker run --name redis --net=elk --ip 172.18.0.10 --restart=always -p 24171:6379 -d redis --requirepass "123456"
+grokzen/redis-cluster
+docker run --name redis2 --net=elk --ip 172.18.0.11 --restart=always -p 24172:6379 -d grokzen/redis-cluster --requirepass "123456"
+
+docker  run -it -d --privileged=true --name r1 -v /home/redis/redis.conf:/usr/redis/redis.conf -p 5001:6379 --net=redis --ip 172.21.0.12 redis bash
+
+创建redis网络
+docker network create --subnet=172.21.0.0/16 redis
+下载redis镜像
+docker pull redis
+修改redis tag镜像
+docker tag containerId redis:meisw
+启动6个实例
+注意：提前创建好目录下的文件，不然docker创建的是目录，不是文件
+mkdir /home/redis/r1  /home/redis/r2 /home/redis/r3 /home/redis/r4 /home/redis/r5 /home/redis/r6
+cd /home/redis
+touch ./r1/redis.conf ./r2/redis.conf ./r3/redis.conf ./r4/redis.conf ./r5/redis.conf ./r6/redis.conf 
+设置值：
+daemonize yes
+cluster-enabled yes
+cluster-config-file nodes.conf
+cluster-node-timeout 15000
+appendonly yes
+bind 172.21.0.12-17（IP与主机对应）
+ROUTE -p add 172.21.0.0 mask 255.255.0.0 192.169.60.129
+
+redis单机:
+docker run -itd --name redis-test --net=redis --ip 172.21.0.19 -p 16379:6379 redis
+
+redis集群：
+docker  run -it -d --privileged=true --name r1 -v /home/redis/redis.conf:/usr/redis/redis.conf -p 5001:6379 --net=redis --ip 172.21.0.12 redis bash
+docker  run -it -d --name r2 -v /home/redis/r2/redis.conf:/usr/redis/redis.conf -p 5002:6379 --net=redis --ip 172.21.0.13 redis bash
+docker  run -it -d --name r3 -v /home/redis/r3/redis.conf:/usr/redis/redis.conf -p 5003:6379 --net=redis --ip 172.21.0.14 redis bash
+docker  run -it -d --name r4 -v /home/redis/r4/redis.conf:/usr/redis/redis.conf -p 5004:6379 --net=redis --ip 172.21.0.15 redis bash
+docker  run -it -d --name r5 -v /home/redis/r5/redis.conf:/usr/redis/redis.conf -p 5005:6379 --net=redis --ip 172.21.0.16 redis bash
+docker  run -it -d --name r6 -v /home/redis/r6/redis.conf:/usr/redis/redis.conf -p 5006:6379 --net=redis --ip 172.21.0.17 redis bash
+
+redis安装目录：vim /usr/redis/redis.conf
+
+docker下安装ruby作为redis-trib集群启动工具
+docker pull ruby
+docker tag ruby:latest ruby:meisw
+docker run -d -it --name redis-trib --net=redis  --ip 172.21.0.18 ruby:meisw 
+#安装vim(可选)
+apt-get update
+apt-get install vim
+#安装redis（为了获取redis-trib.rb文件）
+wget http://download.redis.io/releases/redis-4.0.8.tar.gz
+tar xzf redis-4.0.8.tar.gz
+cd redis-4.0.8
+make && make install 
+#安装ruby的redis客户端
+wget http://rubygems.org/downloads/redis-3.3.0.gem
+gem install -l redis-3.3.0.gem
+gem list -- check reids gem
+进入src目录执行redis命令
+#执行redis-trib命令
+./redis-trib.rb create --replicas 1 <ip>:6391 <ip>:6392 <ip>:6393 <ip>:6394 <ip>:6395 <ip>:6396
+
+./redis-trib.rb create --replicas 1 172.21.0.12:6379 172.21.0.13:6379 172.21.0.14:6379 172.21.0.5:6379 172.21.0.16:6379 172.21.0.17:6379
+在Docker构建的容器中安装ping工具
+sudo apt-get update && apt-get install iputils-ping
+~~~
